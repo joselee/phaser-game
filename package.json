@@ -3,9 +3,7 @@
   "version": "0.0.1",
   "description": "This is an interactive lobby game. Players can join a room, walk around with their characters, and chat in real time. This project is an experiment, to create a real-time multiplayer game with Node.js, Express.js, Socket.io, Angular.js, Phaser.io, and Typescript.",
   "main": "server.js",
-  "scripts": {
-    "postinstall": "typings install"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com:joselee/phaser-game.git"

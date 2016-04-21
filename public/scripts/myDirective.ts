@@ -5,9 +5,9 @@ namespace App {
             scope: false,
             controller: 'myController as ctrl',
             bindToController: true,
-            template: '<h1>{{ctrl.foo}}</h1>'
+            template: '<div id="game"></div>'
         };
     }
-    
+
     app.directive('myDirective', MyDirective);
 }

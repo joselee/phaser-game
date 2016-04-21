@@ -1,5 +1,5 @@
-logs
-node_modules
-public/build
-typings
+node_modules/
+public/build/
+typings/browser/
+typings/main/
 .npm
