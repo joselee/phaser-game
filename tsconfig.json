@@ -5,8 +5,6 @@
   "exclude": [
     "public/scripts/build/",
     "node_modules/",
-    "typings/main/",
-    "typings/main.d.ts",
     "typings/phaser/p2.d.ts",
     "typings/phaser/phaser.d.ts",
     "typings/phaser/pixi.d.ts",
