@@ -3,8 +3,9 @@
     "outFile": "app.js"
   },
   "exclude": [
-    "node_modules",
-    "typings/main",
+    "public/scripts/build/",
+    "node_modules/",
+    "typings/main/",
     "typings/main.d.ts",
     "typings/phaser/p2.d.ts",
     "typings/phaser/phaser.d.ts",

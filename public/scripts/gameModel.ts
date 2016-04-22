@@ -1,5 +1,5 @@
-namespace App {
-    export class SimpleGame {
+namespace Game {
+    export class Game {
         game: Phaser.Game;
         
         constructor() {
