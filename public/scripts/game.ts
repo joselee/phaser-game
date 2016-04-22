@@ -3,7 +3,7 @@ namespace App {
         game: Phaser.Game;
         
         constructor() {
-            this.game = new Phaser.Game(1024, 2048, Phaser.AUTO, 'game', { preload: this.preload, create: this.create });
+            this.game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game', { preload: this.preload, create: this.create });
         }
 
         preload() {

@@ -31,7 +31,6 @@ gulp.task('scripts', function () {
 	del.sync(['public/build/*.js', 'public/build/*.map']);
 	var scripts = [
 		'typings/browser.d.ts',
-		'node_modules/phaser/typescript/phaser.d.ts',
 		'public/scripts/**/*Module.ts',
 		'public/scripts/**/*.ts'
 	];
