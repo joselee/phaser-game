@@ -4,5 +4,5 @@ namespace Game {
             return 'foo';
         }
     }
-    game.service('gameService', GameService);
+    gameModule.service('gameService', GameService);
 }

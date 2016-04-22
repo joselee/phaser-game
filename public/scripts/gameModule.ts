@@ -1,3 +1,3 @@
 namespace Game {
-    export let game = angular.module('game', []);
+    export let gameModule = angular.module('game', []);
 }

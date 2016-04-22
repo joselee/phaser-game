@@ -9,5 +9,5 @@ namespace Game {
             this.game = new Game();
         }
     }
-    game.controller('gameController', GameController);
+    gameModule.controller('gameController', GameController);
 }

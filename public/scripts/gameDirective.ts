@@ -8,5 +8,5 @@ namespace Game {
         };
     }
 
-    game.directive('game', GameDirective);
+    gameModule.directive('game', GameDirective);
 }
