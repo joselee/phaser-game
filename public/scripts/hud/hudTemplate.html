@@ -1,11 +1,13 @@
 <section id="hudContainer">
-    <div id="chatContainer" ng-show="hudCtrl.showChat">
-        <input type="text" class="chat-input" />
+    <div id="chatContainer" ng-show="hudCtrl.showChat" focus-chat-input-on-show>
         <ul class="chat-history">
             <li class="chat-message" ng-repeat="message in hudCtrl.messages">
                 <span class="player-name">{{::message.playerName}}</span>
                 <span class="message-text"> {{::message.text}}</span>
             </li>
         </ul>
+        <form name="chatForm" ng-submit="hudCtrl.sendChatMessage()">
+            <input type="text" class="chat-input" ng-model="hudCtrl.message" />
+        </form>
     </div>
 </section>
