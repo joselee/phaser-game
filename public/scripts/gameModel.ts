@@ -74,22 +74,22 @@ namespace Game {
                 if(!left && !right){
                     this.girl.animations.play('walkUp', 10, true);
                 }
-                this.girl.body.velocity.y = -150;
+                this.girl.body.velocity.y = -100;
             }
             else if (down) {
                 if(!left && !right){
                     this.girl.animations.play('walkDown', 10, true);
                 }
-                this.girl.body.velocity.y = 150;
+                this.girl.body.velocity.y = 100;
             }
 
             if (left) {
                 this.girl.animations.play('walkLeft', 10, true);
-                this.girl.body.velocity.x = -150;
+                this.girl.body.velocity.x = -100;
             }
             else if (right) {
                 this.girl.animations.play('walkRight', 10, true);
-                this.girl.body.velocity.x = 150;
+                this.girl.body.velocity.x = 100;
             }
 
             if (!up && !down && !left && !right) {
