@@ -83,6 +83,11 @@ main {
             text-shadow: 1px 1px black;
             font-size: 11px;
             padding: 5px 10px;
+
+            &:focus::-webkit-input-placeholder { color:transparent; text-shadow: none; }
+            &:focus:-moz-placeholder { color:transparent; text-shadow: none; }
+            &:focus::-moz-placeholder { color:transparent; text-shadow: none; }
+            &:focus:-ms-input-placeholder { color:transparent; text-shadow: none; }
         }
     }
 }

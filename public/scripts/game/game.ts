@@ -42,8 +42,8 @@ namespace PhaserGame {
             this.game.camera.follow(player);
 
             // Listens for angular event to toggle game keyboard bindings.
-            this.game.rootScope.$on('toggleGameCaptureInput', (event, enabled) => {
-                this.game.input.keyboard.enabled = enabled;
+            this.game.rootScope.$on('setFocusToChat', (event, chatFocused) => {
+                this.game.input.keyboard.enabled = !chatFocused; // Game consumes keyboard input only if chat doesn't have focus
                 this.game.input.keyboard.reset();
             });
         }

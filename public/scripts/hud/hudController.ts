@@ -1,17 +1,11 @@
 namespace PhaserGame {
     class HudController {
-        showChat: boolean = false;
         playerName: string;
         message: string = '';
         messages: ChatMessage[] = [];
 
         static $inject = ['$rootScope'];
         constructor($rootScope: ng.IRootScopeService) {
-            $rootScope.$on('toggleGameCaptureInput', (event, enabled) => {
-                this.showChat = !enabled;
-                $rootScope.$apply();
-            });
-
             this.setPlayerName();
             this.messages.push({playerName: '', text: 'Welcome!'});
             this.messages.push({playerName: '', text: 'You have joined as: ' + this.playerName});
@@ -20,8 +14,8 @@ namespace PhaserGame {
         sendChatMessage() {
             if(this.message){
                 this.messages.push({playerName: this.playerName, text: this.message});
-                this.message = '';
             }
+            this.message = '';
         }
         
         setPlayerName() {
