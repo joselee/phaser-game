@@ -1,8 +1,8 @@
-namespace Game {
+namespace PhaserGame {
     export class GameService {
         getFoo(){
             return 'foo';
         }
     }
-    gameModule.service('gameService', GameService);
+    app.service('gameService', GameService);
 }

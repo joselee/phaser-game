@@ -1,4 +1,4 @@
-namespace Game {
+namespace PhaserGame {
     export class GameController {
         foo: string;
         game: Game;
@@ -9,5 +9,5 @@ namespace Game {
             this.game = new Game($rootScope);
         }
     }
-    gameModule.controller('gameController', GameController);
+    app.controller('gameController', GameController);
 }

@@ -1,4 +1,4 @@
-namespace Game {
+namespace PhaserGame {
     export class Game {
         game: IPhaserAngularGame;
         map: Phaser.Tilemap;
@@ -17,7 +17,7 @@ namespace Game {
             this.game.load.image('tileset_nature_1', 'assets/tileset_nature_1.png');
             this.game.load.spritesheet('girl', 'assets/character_girl_5.png', 32, 32);
         }
-        
+
         create() {
             // Load the tilemap world_tilemap.json, and the image asset(s) it needs 
             this.map = this.game.add.tilemap('world_tilemap');
@@ -41,8 +41,10 @@ namespace Game {
             this.game.add.existing(player);
             this.game.camera.follow(player);
 
-            this.game.rootScope.$on('test', (data)=>{
-                console.log(data);
+            // Listens for angular event to toggle game keyboard bindings.
+            this.game.rootScope.$on('toggleGameCaptureInput', (event, enabled) => {
+                this.game.input.keyboard.enabled = enabled;
+                this.game.input.keyboard.reset();
             });
         }
     }
@@ -50,7 +52,7 @@ namespace Game {
     export interface IPhaserAngularGame extends Phaser.Game {
         rootScope?: ng.IRootScopeService;
     }
-    
+
     export interface IMapLayers {
         bgLayer: Phaser.TilemapLayer;
         rocksLayer: Phaser.TilemapLayer;

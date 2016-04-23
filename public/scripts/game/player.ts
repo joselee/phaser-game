@@ -1,4 +1,4 @@
-namespace Game {
+namespace PhaserGame {
     export class Player extends Phaser.Sprite {
         game: IPhaserAngularGame;
         animationSpeed: number = 10;
@@ -39,25 +39,26 @@ namespace Game {
             this.body.velocity.y = 0;
             this.body.velocity.x = 0;
 
+
             if (up) {
-                if (!left && !right) {
-                    this.animations.play('walkUp', this.animationSpeed, true);
-                }
+                this.animations.play('walkUp', this.animationSpeed, true);
                 this.body.velocity.y = -this.movementSpeed;
             }
             else if (down) {
-                if (!left && !right) {
-                    this.animations.play('walkDown', this.animationSpeed, true);
-                }
+                this.animations.play('walkDown', this.animationSpeed, true);
                 this.body.velocity.y = this.movementSpeed;
             }
 
             if (left) {
-                this.animations.play('walkLeft', this.animationSpeed, true);
+                if (!up && !down) { // Up & down animations take precedence over left & right
+                    this.animations.play('walkLeft', this.animationSpeed, true);
+                }
                 this.body.velocity.x = -this.movementSpeed;
             }
             else if (right) {
-                this.animations.play('walkRight', this.animationSpeed, true);
+                if (!up && !down) { // Up & down animations take precedence over left & right
+                    this.animations.play('walkRight', this.animationSpeed, true);
+                }
                 this.body.velocity.x = this.movementSpeed;
             }
 
