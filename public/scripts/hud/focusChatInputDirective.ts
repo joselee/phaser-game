@@ -20,7 +20,7 @@ namespace PhaserGame {
                 $element.on('focus blur', (e) => {
                     chatFocus = (e.type === 'focus');
                     $rootScope.$emit('setFocusToChat', chatFocus);
-                }));
+                });
 
                 // Disable tab key, so we dont lose focus while typing
                 $element.on('keydown', (e) => {
@@ -30,7 +30,7 @@ namespace PhaserGame {
                 });
             }
         };
-    });
+    };
 
     app.directive('focusChatInput', ['$rootScope', '$timeout', FocusChatInputDirective]);
 }

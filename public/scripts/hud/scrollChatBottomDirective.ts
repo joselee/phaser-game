@@ -12,7 +12,7 @@ namespace PhaserGame {
                 });
             }
         };
-    });
+    };
 
     app.directive('scrollChatBottom', ['$timeout', ScrollChatBottomDirective]);
 }
