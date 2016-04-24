@@ -1,6 +1,6 @@
 <section id="hudContainer">
     <div id="chatContainer">
-        <ul class="chat-history">
+        <ul class="chat-history" scroll-chat-bottom="hudCtrl.messages">
             <li class="chat-message" ng-repeat="message in hudCtrl.messages">
                 <span class="player-name" ng-if="message.playerName">{{::message.playerName}}: </span>
                 <span class="message-text"> {{::message.text}}</span>
