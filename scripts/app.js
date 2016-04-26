@@ -50,14 +50,14 @@ function create() {
             animation: 'walkRight'
         }
     }
-    
-    _.each(controls, function(control){
+
+    _.each(controls, function (control) {
         control.key.onDown.add(function () {
             player.body.velocity[control.direction] += control.velocity;
         });
         control.key.onUp.add(function () {
             player.body.velocity[control.direction] -= control.velocity;
-        });        
+        });
     });
 }
 function update() {
