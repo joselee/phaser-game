@@ -3,7 +3,7 @@ var map;
 var bgLayer;
 var controls;
 
-var game = new Phaser.Game(480, 480, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(480, 320, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
 
 function preload() {
     game.load.tilemap('world', 'assets/world.json', null, Phaser.Tilemap.TILED_JSON);
@@ -15,7 +15,7 @@ function create() {
     map.addTilesetImage('worldpng', 'worldpng');
     bgLayer = map.createLayer('bg');
     
-    player = game.add.sprite(300, 300, 'player');
+    player = game.add.sprite(240, 160, 'player');
     player.animations.add('walkDown', [0, 1, 2]);
     player.animations.add('walkLeft', [3, 4, 5]);
     player.animations.add('walkRight', [6, 7, 8]);
