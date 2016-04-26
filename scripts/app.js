@@ -1,15 +1,9 @@
 var player;
-var keys;
 var map;
 var bgLayer;
-var collisionLayer;
-var topLayer;
-var upKey;
-var downKey;
-var leftKey;
-var rightKey;
+var controls;
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(480, 480, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
 
 function preload() {
     game.load.tilemap('world', 'assets/world.json', null, Phaser.Tilemap.TILED_JSON);
@@ -20,10 +14,6 @@ function create() {
     map = game.add.tilemap('world');
     map.addTilesetImage('worldpng', 'worldpng');
     bgLayer = map.createLayer('bg');
-    topLayer = map.createLayer('top');
-    collisionLayer = map.createLayer('collision');
-    map.setCollisionBetween(1, 10000, true, 'collision');
-    collisionLayer.alpha = 0;
     
     player = game.add.sprite(300, 300, 'player');
     player.animations.add('walkDown', [0, 1, 2]);
@@ -33,30 +23,48 @@ function create() {
     player.anchor.x = 0.5;
     player.anchor.y = 0.5;
     game.physics.arcade.enable(player);
-
-    upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-    rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    
+    this.controls = {
+        up: game.input.keyboard.addKey(Phaser.Keyboard.UP),
+        down: game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
+        left: game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
+        right: game.input.keyboard.addKey(Phaser.Keyboard.RIGHT),
+        w: game.input.keyboard.addKey(Phaser.Keyboard.W),
+        s: game.input.keyboard.addKey(Phaser.Keyboard.S),
+        a: game.input.keyboard.addKey(Phaser.Keyboard.A),
+        d: game.input.keyboard.addKey(Phaser.Keyboard.D)
+    }
 }
 function update() {
+    var up = this.controls.up.isDown || this.controls.w.isDown;
+    var down = this.controls.down.isDown || this.controls.s.isDown;
+    var left = this.controls.left.isDown || this.controls.a.isDown;
+    var right = this.controls.right.isDown || this.controls.d.isDown;
+    
     player.body.velocity.y = 0;
     player.body.velocity.x = 0;
     
-    if (upKey.isDown){
+    if (up){
         player.animations.play('walkUp', 10, true);
         player.body.velocity.y = -100;
-    } else if (downKey.isDown) {
+    } else if (down) {
         player.animations.play('walkDown', 10, true);
         player.body.velocity.y = 100;
-    } else if (leftKey.isDown){
-        player.animations.play('walkLeft', 10, true);
+    }
+    
+    if (left){
+        if(!up && !down){
+            player.animations.play('walkLeft', 10, true);
+        }
         player.body.velocity.x = -100;
-    } else if (rightKey.isDown) {
-        player.animations.play('walkRight', 10, true);
+    } else if (right) {
+        if(!up && !down){
+            player.animations.play('walkRight', 10, true);
+        }
         player.body.velocity.x = 100;
-    } else {
+    }
+    
+    if(!up && !down && !left && !right) {
         player.animations.stop();
     }
-    game.physics.arcade.collide(player, collisionLayer);
 }
