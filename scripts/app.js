@@ -14,7 +14,7 @@ function create() {
     map = game.add.tilemap('world');
     map.addTilesetImage('worldpng', 'worldpng');
     bgLayer = map.createLayer('bg');
-    
+
     player = game.add.sprite(240, 160, 'player');
     player.animations.add('walkDown', [0, 1, 2]);
     player.animations.add('walkLeft', [3, 4, 5]);
@@ -23,48 +23,65 @@ function create() {
     player.anchor.x = 0.5;
     player.anchor.y = 0.5;
     game.physics.arcade.enable(player);
-    
-    this.controls = {
-        up: game.input.keyboard.addKey(Phaser.Keyboard.UP),
-        down: game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
-        left: game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
-        right: game.input.keyboard.addKey(Phaser.Keyboard.RIGHT),
-        w: game.input.keyboard.addKey(Phaser.Keyboard.W),
-        s: game.input.keyboard.addKey(Phaser.Keyboard.S),
-        a: game.input.keyboard.addKey(Phaser.Keyboard.A),
-        d: game.input.keyboard.addKey(Phaser.Keyboard.D)
+
+    controls = {
+        up: {
+            key: game.input.keyboard.addKey(Phaser.Keyboard.UP),
+            direction: 'y',
+            velocity: -100,
+            animation: 'walkUp'
+        },
+        down: {
+            key: game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
+            direction: 'y',
+            velocity: 100,
+            animation: 'walkDown'
+        },
+        left: {
+            key: game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
+            direction: 'x',
+            velocity: -100,
+            animation: 'walkLeft'
+        },
+        right: {
+            key: game.input.keyboard.addKey(Phaser.Keyboard.RIGHT),
+            direction: 'x',
+            velocity: 100,
+            animation: 'walkRight'
+        }
     }
+    
+    _.each(controls, function(control){
+        control.key.onDown.add(function () {
+            player.body.velocity[control.direction] += control.velocity;
+        });
+        control.key.onUp.add(function () {
+            player.body.velocity[control.direction] -= control.velocity;
+        });        
+    });
 }
 function update() {
-    var up = this.controls.up.isDown || this.controls.w.isDown;
-    var down = this.controls.down.isDown || this.controls.s.isDown;
-    var left = this.controls.left.isDown || this.controls.a.isDown;
-    var right = this.controls.right.isDown || this.controls.d.isDown;
-    
-    player.body.velocity.y = 0;
-    player.body.velocity.x = 0;
-    
-    if (up){
-        player.animations.play('walkUp', 10, true);
-        player.body.velocity.y = -100;
-    } else if (down) {
-        player.animations.play('walkDown', 10, true);
-        player.body.velocity.y = 100;
+    var x = player.body.velocity.x;
+    var y = player.body.velocity.y;
+
+    // Vertical movement
+    if (y === controls.up.velocity) {
+        player.animations.play(controls.up.animation, 10, true);
     }
-    
-    if (left){
-        if(!up && !down){
-            player.animations.play('walkLeft', 10, true);
-        }
-        player.body.velocity.x = -100;
-    } else if (right) {
-        if(!up && !down){
-            player.animations.play('walkRight', 10, true);
-        }
-        player.body.velocity.x = 100;
+    else if (y === controls.down.velocity) {
+        player.animations.play(controls.down.animation, 10, true);
     }
-    
-    if(!up && !down && !left && !right) {
+
+    // Horizontal movement
+    if (x === controls.left.velocity && y === 0) {
+        player.animations.play(controls.left.animation, 10, true);
+    }
+    else if (x === controls.right.velocity && y === 0) {
+        player.animations.play(controls.right.animation, 10, true);
+    }
+
+    // No movement
+    if (x === 0 && y === 0) {
         player.animations.stop();
     }
 }
