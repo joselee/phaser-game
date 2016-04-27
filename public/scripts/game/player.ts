@@ -83,12 +83,13 @@ namespace PhaserGame {
 
             this.game.physics.arcade.collide(this, this.mapLayers.blockedLayer);
         }
-        stopMovement(shouldStop: boolean) {
-            if (shouldStop){
-                this.body.velocity.x = 0;
-                this.body.velocity.y = 0;
-                this.animations.stop();
+        resetMovementControls() {
+            for (let id in this.movementControls){
+                this.movementControls[id].key.reset();
             }
+            this.body.velocity.x = 0;
+            this.body.velocity.y = 0;
+            this.animations.stop();
         }
     }
     interface IMovementControl {
