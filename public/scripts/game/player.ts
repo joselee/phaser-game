@@ -4,10 +4,11 @@ namespace PhaserGame {
         animationSpeed: number = 10;
         movementSpeed: number = 100;
         controls: IKeyboardControls;
-        
-        constructor(game: IPhaserAngularGame, x: number, y: number, spriteSheetId: string, private mapLayers: IMapLayers){
+
+        constructor(game: IPhaserAngularGame, x: number, y: number, spriteSheetId: string, private mapLayers: IMapLayers) {
             super(game, x, y, spriteSheetId);
             this.game = game;
+            this.game.physics.arcade.enable(this);
 
             this.animations.add('walkDown', [0, 1, 2]);
             this.animations.add('walkLeft', [3, 4, 5]);
@@ -25,48 +26,57 @@ namespace PhaserGame {
                 d: this.game.input.keyboard.addKey(Phaser.Keyboard.D)
             };
 
-            this.game.physics.arcade.enable(this);
         }
 
         update() {
             super.update();
-
+            this.game.physics.arcade.collide(this, this.mapLayers.blockedLayer);
+            let velocity = this.body.velocity;
+            this.movePlayer(velocity);
+            this.animateMovement(velocity);
+        }
+        movePlayer(velocity) {
             let up = this.controls.up.isDown || this.controls.w.isDown;
             let down = this.controls.down.isDown || this.controls.s.isDown;
             let left = this.controls.left.isDown || this.controls.a.isDown;
             let right = this.controls.right.isDown || this.controls.d.isDown;
 
-            this.body.velocity.y = 0;
-            this.body.velocity.x = 0;
+            // Stop movement on each frame before deciding to move
+            velocity.y = 0;
+            velocity.x = 0;
 
+            // Vertical movement
+            if (up && down)
+                velocity.y = 0;
+            else if (up)
+                velocity.y = -this.movementSpeed;
+            else if (down)
+                velocity.y = this.movementSpeed;
 
-            if (up) {
+            // Horizontal movement
+            if (left && right)
+                velocity.x = 0;
+            else if (left)
+                velocity.x = -this.movementSpeed;
+            else if (right)
+                velocity.x = this.movementSpeed;
+        }
+        animateMovement(velocity) {
+            // Vertical movement
+            if (velocity.y < 0)
                 this.animations.play('walkUp', this.animationSpeed, true);
-                this.body.velocity.y = -this.movementSpeed;
-            }
-            else if (down) {
+            else if (velocity.y > 0)
                 this.animations.play('walkDown', this.animationSpeed, true);
-                this.body.velocity.y = this.movementSpeed;
-            }
 
-            if (left) {
-                if (!up && !down) { // Up & down animations take precedence over left & right
-                    this.animations.play('walkLeft', this.animationSpeed, true);
-                }
-                this.body.velocity.x = -this.movementSpeed;
-            }
-            else if (right) {
-                if (!up && !down) { // Up & down animations take precedence over left & right
-                    this.animations.play('walkRight', this.animationSpeed, true);
-                }
-                this.body.velocity.x = this.movementSpeed;
-            }
+            // Horizontal movement
+            if (velocity.x < 0 && velocity.y === 0)
+                this.animations.play('walkLeft', this.animationSpeed, true);
+            else if (velocity.x > 0 && velocity.y === 0)
+                this.animations.play('walkRight', this.animationSpeed, true);
 
-            if (!up && !down && !left && !right) {
+            // No movement
+            if (velocity.x === 0 && velocity.y === 0)
                 this.animations.stop();
-            }
-
-            this.game.physics.arcade.collide(this, this.mapLayers.blockedLayer);
         }
     }
 
