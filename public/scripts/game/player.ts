@@ -3,7 +3,7 @@ namespace PhaserGame {
         game: IPhaserAngularGame;
         animationSpeed: number = 10;
         movementSpeed: number = 100;
-        controls: IKeyboardControls;
+        controls: IUserInput;
         
         constructor(game: IPhaserAngularGame, x: number, y: number, spriteSheetId: string, private mapLayers: IMapLayers){
             super(game, x, y, spriteSheetId);
@@ -18,11 +18,7 @@ namespace PhaserGame {
                 up: this.game.input.keyboard.addKey(Phaser.Keyboard.UP),
                 down: this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
                 left: this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
-                right: this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT),
-                w: this.game.input.keyboard.addKey(Phaser.Keyboard.W),
-                s: this.game.input.keyboard.addKey(Phaser.Keyboard.S),
-                a: this.game.input.keyboard.addKey(Phaser.Keyboard.A),
-                d: this.game.input.keyboard.addKey(Phaser.Keyboard.D)
+                right: this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
             };
 
             this.game.physics.arcade.enable(this);
@@ -68,16 +64,22 @@ namespace PhaserGame {
 
             this.game.physics.arcade.collide(this, this.mapLayers.blockedLayer);
         }
+
+        bindControls (){
+            
+        }
     }
 
-    interface IKeyboardControls {
-        up: Phaser.Key;
-        down: Phaser.Key;
-        left: Phaser.Key;
-        right: Phaser.Key;
-        w: Phaser.Key;
-        s: Phaser.Key;
-        a: Phaser.Key;
-        d: Phaser.Key;
+    interface IUserInput {
+        up: IMovementKey;
+        down: IMovementKey;
+        left: IMovementKey;
+        right: IMovementKey;
+    }
+    interface IMovementKey {
+        key: Phaser.Key;
+        direction: string;
+        velocity: number;
+        animation: string;
     }
 }
