@@ -4,6 +4,7 @@
     "angular-ui-bootstrap": "registry:dt/angular-ui-bootstrap#0.13.3+20160406111533",
     "bootstrap": "registry:dt/bootstrap#3.3.5+20160316155526",
     "jquery": "registry:dt/jquery#1.10.0+20160316155526",
-    "lodash": "registry:dt/lodash#3.10.0+20160330154726"
+    "lodash": "registry:dt/lodash#3.10.0+20160330154726",
+    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654"
   }
 }

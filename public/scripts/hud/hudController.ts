@@ -2,18 +2,24 @@ namespace PhaserGame {
     class HudController {
         playerName: string;
         message: string = '';
-        messages: ChatMessage[] = [];
+        messages: IChatMessage[] = [];
 
-        static $inject = ['$rootScope'];
-        constructor($rootScope: ng.IRootScopeService) {
+        static $inject = ['$rootScope', 'socketService'];
+        constructor($rootScope: ng.IRootScopeService, private socketService: SocketService) {
             this.setPlayerName();
             this.messages.push({playerName: '', text: 'Welcome!'});
             this.messages.push({playerName: '', text: 'You have joined as: ' + this.playerName});
+
+            $rootScope.$on('addMessageToChatbox', (event: ng.IAngularEvent, message: IChatMessage) => {
+                $rootScope.$apply(() => {
+                    this.messages.push(message)
+                });
+            });
         }
 
-        sendChatMessage() {
+        chatMessageToServer() {
             if(this.message){
-                this.messages.push({playerName: this.playerName, text: this.message});
+                this.socketService.chatMessageToServer({playerName: this.playerName, text: this.message});
             }
             this.message = '';
         }
@@ -26,9 +32,4 @@ namespace PhaserGame {
     }
 
     app.controller('hudController', HudController);
-
-    class ChatMessage {
-        playerName: string;
-        text: string;
-    }
 }

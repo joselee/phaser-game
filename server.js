@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
+var io = require('socket.io')(server, {});
 
 app.use('/', express.static(__dirname + '/public'));
 server.listen(8080);
@@ -34,29 +35,33 @@ var Player = function (id) {
     return self;
 }
 
-var io = require('socket.io')(server, {});
 io.sockets.on('connection', function (socket) {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
+    console.log('client_connection');
 
-    var player = Player(socket.id);
-    PLAYER_LIST[socket.id] = player;
-
-    socket.on('disconnect', function () {
-        delete SOCKET_LIST[socket.id];
-        delete PLAYER_LIST[socket.id];
+    socket.on('chatMessageToServer', (message) => {
+        io.sockets.emit('chatMessageToClients', message);
     });
 
-    socket.on('keyPress', function (data) {
-        if (data.inputId === 'left')
-            player.pressingLeft = data.state;
-        else if (data.inputId === 'right')
-            player.pressingRight = data.state;
-        else if (data.inputId === 'up')
-            player.pressingUp = data.state;
-        else if (data.inputId === 'down')
-            player.pressingDown = data.state;
-    });
+    // var player = Player(socket.id);
+    // PLAYER_LIST[socket.id] = player;
+
+    // socket.on('disconnect', function () {
+    //     delete SOCKET_LIST[socket.id];
+    //     delete PLAYER_LIST[socket.id];
+    // });
+
+    // socket.on('keyPress', function (data) {
+    //     if (data.inputId === 'left')
+    //         player.pressingLeft = data.state;
+    //     else if (data.inputId === 'right')
+    //         player.pressingRight = data.state;
+    //     else if (data.inputId === 'up')
+    //         player.pressingUp = data.state;
+    //     else if (data.inputId === 'down')
+    //         player.pressingDown = data.state;
+    // });
 });
 
 setInterval(function () {

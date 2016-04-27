@@ -52,7 +52,8 @@ gulp.task('libs', function () {
 			'node_modules/angular/angular.min.js',
 			'node_modules/angular-bootstrap/ui-bootstrap-tpls.min.js',
 			'node_modules/angular-ui-router/release/angular-ui-router.min.js',
-			'node_modules/phaser/dist/phaser.min.js'
+			'node_modules/phaser/dist/phaser.min.js',
+			'node_modules/socket.io/node_modules/socket.io-client/socket.io.js'
 		],
 		styles: [
 			'node_modules/bootstrap/less/bootstrap.less'

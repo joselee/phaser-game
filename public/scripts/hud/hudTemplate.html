@@ -6,10 +6,10 @@
                 <span class="message-text"> {{::message.text}}</span>
             </li>
         </ul>
-        <form name="chatForm" ng-submit="hudCtrl.sendChatMessage()">
+        <form name="chatForm" ng-submit="hudCtrl.chatMessageToServer()">
             <input type="text"
                    class="chat-input"
-                   placeholder="Click here (or press enter) to type"
+                   placeholder="Click here (or press enter) to chat"
                    ng-model="hudCtrl.message"
                    focus-chat-input />
         </form>

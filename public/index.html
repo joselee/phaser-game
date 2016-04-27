@@ -1,38 +1,18 @@
-<canvas id="ctx" width="500" height="500" style="border:1px solid #000000;"></canvas>
-<p>move with keys: w, s, a, d</p>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    var ctx = document.getElementById("ctx").getContext("2d");
-    ctx.font = '30px Arial';
-   
-    var socket = io();
-       
-    socket.on('newPositions',function(data){
-        ctx.clearRect(0,0,500,500);
-        for(var i = 0 ; i < data.length; i++)
-            ctx.fillText(data[i].number,data[i].x,data[i].y);      
-    });
- 
-    document.onkeydown = function(event){
-        if(event.keyCode === 68)    //d
-            socket.emit('keyPress',{inputId:'right',state:true});
-        else if(event.keyCode === 83)   //s
-            socket.emit('keyPress',{inputId:'down',state:true});
-        else if(event.keyCode === 65) //a
-            socket.emit('keyPress',{inputId:'left',state:true});
-        else if(event.keyCode === 87) // w
-            socket.emit('keyPress',{inputId:'up',state:true});
-           
-    }
-    document.onkeyup = function(event){
-        if(event.keyCode === 68)    //d
-            socket.emit('keyPress',{inputId:'right',state:false});
-        else if(event.keyCode === 83)   //s
-            socket.emit('keyPress',{inputId:'down',state:false});
-        else if(event.keyCode === 65) //a
-            socket.emit('keyPress',{inputId:'left',state:false});
-        else if(event.keyCode === 87) // w
-            socket.emit('keyPress',{inputId:'up',state:false});
-    }
+<!doctype html>
 
-</script>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="build/libs/libs.css">
+    <link rel="stylesheet" type="text/css" href="build/app.css">
+    <script src="build/libs/libs.js"></script>
+    <script src="build/app.js"></script>
+</head>
+<body ng-app="app">
+    <main>
+        <hud id="hud"></hud>
+        <game id="game"></game>
+        <p class="control-hint">Use arrow keys or wsad to move.</p>
+    </main>
+</body>
+</html>

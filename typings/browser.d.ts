@@ -3,4 +3,5 @@
 /// <reference path="browser/ambient/bootstrap/index.d.ts" />
 /// <reference path="browser/ambient/jquery/index.d.ts" />
 /// <reference path="browser/ambient/lodash/index.d.ts" />
+/// <reference path="browser/ambient/socket.io-client/index.d.ts" />
 /// <reference path="phaser/phaser.d.ts" />
