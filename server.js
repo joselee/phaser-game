@@ -3,7 +3,7 @@ var app = express();
 var server = require('http').Server(app);
 
 app.use('/', express.static(__dirname + '/public'));
-server.listen(8080);
+server.listen(80);
 console.log("Server started on port 8080");
 
 var SOCKET_LIST = {};
