@@ -3,82 +3,97 @@ namespace PhaserGame {
         game: IPhaserAngularGame;
         animationSpeed: number = 10;
         movementSpeed: number = 100;
-        controls: IUserInput;
+        movementControls;
         
         constructor(game: IPhaserAngularGame, x: number, y: number, spriteSheetId: string, private mapLayers: IMapLayers){
             super(game, x, y, spriteSheetId);
             this.game = game;
-
+            this.game.physics.arcade.enable(this);
+            this.addAnimations();
+            this.setupMovementControls();
+        }
+        addAnimations() {
             this.animations.add('walkDown', [0, 1, 2]);
             this.animations.add('walkLeft', [3, 4, 5]);
             this.animations.add('walkRight', [6, 7, 8]);
             this.animations.add('walkUp', [9, 10, 11]);
-
-            this.controls = {
-                up: this.game.input.keyboard.addKey(Phaser.Keyboard.UP),
-                down: this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
-                left: this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
-                right: this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
+        }
+        setupMovementControls (){
+            this.movementControls = {
+                up: {
+                    key: this.game.input.keyboard.addKey(Phaser.Keyboard.UP),
+                    axis: 'y',
+                    velocity: -this.movementSpeed,
+                    animation: 'walkUp'
+                },
+                down: {
+                    key: this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
+                    axis: 'y',
+                    velocity: this.movementSpeed,
+                    animation: 'walkDown'
+                },
+                left: {
+                    key: this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
+                    axis: 'x',
+                    velocity: -this.movementSpeed,
+                    animation: 'walkLeft'
+                },
+                right: {
+                    key: this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT),
+                    axis: 'x',
+                    velocity: this.movementSpeed,
+                    animation: 'walkRight'
+                },
             };
 
-            this.game.physics.arcade.enable(this);
+            for (let id in this.movementControls){
+                let control: IMovementControl = this.movementControls[id];
+                control.key.onDown.add(() => {
+                    this.body.velocity[control.axis] += control.velocity;
+                });
+                control.key.onUp.add(() => {
+                    this.body.velocity[control.axis] -= control.velocity;
+                });
+            }
         }
-
         update() {
             super.update();
-
-            let up = this.controls.up.isDown || this.controls.w.isDown;
-            let down = this.controls.down.isDown || this.controls.s.isDown;
-            let left = this.controls.left.isDown || this.controls.a.isDown;
-            let right = this.controls.right.isDown || this.controls.d.isDown;
-
-            this.body.velocity.y = 0;
-            this.body.velocity.x = 0;
-
-
-            if (up) {
-                this.animations.play('walkUp', this.animationSpeed, true);
-                this.body.velocity.y = -this.movementSpeed;
+            let x = this.body.velocity.x;
+            let y = this.body.velocity.y;
+            let mc = this.movementControls;
+            
+            // Vertical movement
+            if (y === mc.up.velocity) {
+                this.animations.play(mc.up.animation, this.animationSpeed, true);
             }
-            else if (down) {
-                this.animations.play('walkDown', this.animationSpeed, true);
-                this.body.velocity.y = this.movementSpeed;
+            else if (y === mc.down.velocity) {
+                this.animations.play(mc.down.animation, this.animationSpeed, true);
             }
-
-            if (left) {
-                if (!up && !down) { // Up & down animations take precedence over left & right
-                    this.animations.play('walkLeft', this.animationSpeed, true);
-                }
-                this.body.velocity.x = -this.movementSpeed;
+            // Horizontal movement
+            if (x === mc.left.velocity && y === 0) {
+                this.animations.play(mc.left.animation, this.animationSpeed, true);
             }
-            else if (right) {
-                if (!up && !down) { // Up & down animations take precedence over left & right
-                    this.animations.play('walkRight', this.animationSpeed, true);
-                }
-                this.body.velocity.x = this.movementSpeed;
+            else if (x === mc.right.velocity && y === 0) {
+                this.animations.play(mc.right.animation, this.animationSpeed, true);
             }
-
-            if (!up && !down && !left && !right) {
+            // No movement
+            if (x === 0 && y === 0) {
                 this.animations.stop();
             }
 
             this.game.physics.arcade.collide(this, this.mapLayers.blockedLayer);
         }
-
-        bindControls (){
-            
+        stopMovement(shouldStop: boolean) {
+            if (shouldStop){
+                this.body.velocity.x = 0;
+                this.body.velocity.y = 0;
+                this.animations.stop();
+            }
         }
     }
-
-    interface IUserInput {
-        up: IMovementKey;
-        down: IMovementKey;
-        left: IMovementKey;
-        right: IMovementKey;
-    }
-    interface IMovementKey {
+    interface IMovementControl {
         key: Phaser.Key;
-        direction: string;
+        axis: string;
         velocity: number;
         animation: string;
     }

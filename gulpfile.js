@@ -9,7 +9,9 @@ var listFiles = require('gulp-filesize'); /* .pipe(listFiles()) to see files in 
 var gutil = require('gulp-util');
 var tsProject = ts.createProject('tsconfig.json', { sortOutput: true });
 
-gulp.task('default', ['build'], function () {
+gulp.task('default', ['build']);
+
+gulp.task('watch', ['build'], function () {
 	gulp.watch(['public/styles/**/*.less'], ['styles']);
 	gulp.watch(['public/scripts/**/*.ts'], ['scripts']);
 });
