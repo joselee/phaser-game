@@ -13,6 +13,9 @@ namespace PhaserGame {
         chatMessageToServer(message: IChatMessage){
             this.socket.emit('chatMessageToServer', message);
         }
+        playerPositionToServer(message: IPlayerPositionUpdateMessage){
+            this.socket.emit('playerPositionToServer', message);
+        }
     }
 
     app.service('socketService', SocketService);

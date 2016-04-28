@@ -4,6 +4,8 @@ namespace PhaserGame {
         animationSpeed: number = 10;
         movementSpeed: number = 100;
         controls: IKeyboardControls;
+        lastUpdateMsg: IPlayerPositionUpdateMessage;
+        updateMsg: IPlayerPositionUpdateMessage;
 
         constructor(game: IPhaserAngularGame, x: number, y: number, spriteSheetId: string, private mapLayers: IMapLayers) {
             super(game, x, y, spriteSheetId);
@@ -26,6 +28,7 @@ namespace PhaserGame {
                 d: this.game.input.keyboard.addKey(Phaser.Keyboard.D)
             };
 
+            this.sendUpdateToServer();
         }
 
         update() {
@@ -77,6 +80,19 @@ namespace PhaserGame {
             // No movement
             if (velocity.x === 0 && velocity.y === 0)
                 this.animations.stop();
+        }
+        sendUpdateToServer() {
+            setInterval(() => {
+                this.updateMsg = {
+                    posX: this.body.position.x,
+                    posY: this.body.position.y,
+                    velX: this.body.velocity.x,
+                    velY: this.body.velocity.y,
+                    animation: this.animations.currentAnim.name,
+                    timestamp: new Date()
+                };
+                this.game.socketService.playerPositionToServer(this.updateMsg);
+            }, 1000/30);
         }
     }
 

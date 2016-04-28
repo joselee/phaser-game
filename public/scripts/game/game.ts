@@ -4,12 +4,13 @@ namespace PhaserGame {
         map: Phaser.Tilemap;
         mapLayers: IMapLayers;
 
-        constructor($rootScope: ng.IRootScopeService) {
+        constructor($rootScope: ng.IRootScopeService, socketService: SocketService) {
             this.game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
                 preload: this.preload,
                 create: this.create
             });
             this.game.rootScope = $rootScope;
+            this.game.socketService = socketService;
         }
 
         preload() {
@@ -44,13 +45,14 @@ namespace PhaserGame {
             // Listens for angular event to toggle game keyboard bindings.
             this.game.rootScope.$on('setFocusToChat', (event, chatFocused) => {
                 this.game.input.keyboard.enabled = !chatFocused; // Game consumes keyboard input only if chat doesn't have focus
-                this.game.input.keyboard.reset();
+                this.game.input.keyboard.reset(false);
             });
         }
     }
 
     export interface IPhaserAngularGame extends Phaser.Game {
         rootScope?: ng.IRootScopeService;
+        socketService?: SocketService;
     }
 
     export interface IMapLayers {

@@ -44,24 +44,28 @@ io.sockets.on('connection', function (socket) {
         io.sockets.emit('chatMessageToClients', message);
     });
 
-    // var player = Player(socket.id);
-    // PLAYER_LIST[socket.id] = player;
+    socket.on('playerPositionToServer', (message) => {
+        io.sockets.emit('chatMessageToClients', message);
+    });
 
-    // socket.on('disconnect', function () {
-    //     delete SOCKET_LIST[socket.id];
-    //     delete PLAYER_LIST[socket.id];
-    // });
+    var player = Player(socket.id);
+    PLAYER_LIST[socket.id] = player;
 
-    // socket.on('keyPress', function (data) {
-    //     if (data.inputId === 'left')
-    //         player.pressingLeft = data.state;
-    //     else if (data.inputId === 'right')
-    //         player.pressingRight = data.state;
-    //     else if (data.inputId === 'up')
-    //         player.pressingUp = data.state;
-    //     else if (data.inputId === 'down')
-    //         player.pressingDown = data.state;
-    // });
+    socket.on('disconnect', function () {
+        delete SOCKET_LIST[socket.id];
+        delete PLAYER_LIST[socket.id];
+    });
+
+    socket.on('keyPress', function (data) {
+        if (data.inputId === 'left')
+            player.pressingLeft = data.state;
+        else if (data.inputId === 'right')
+            player.pressingRight = data.state;
+        else if (data.inputId === 'up')
+            player.pressingUp = data.state;
+        else if (data.inputId === 'down')
+            player.pressingDown = data.state;
+    });
 });
 
 setInterval(function () {
