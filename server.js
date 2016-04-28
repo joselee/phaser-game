@@ -9,18 +9,17 @@ console.log("Server started on port 8080");
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
+var updatedPlayers = [];
 
 var Player = function (id) {
     var self = {
-        x: 250,
-        y: 250,
         id: id,
-        number: "" + Math.floor(10 * Math.random()),
-        pressingRight: false,
-        pressingLeft: false,
-        pressingUp: false,
-        pressingDown: false,
-        maxSpd: 5,
+        posX: 180,
+        posY: 300,
+        velX: 0,
+        velY: 0,
+        animation: 'walkDown',
+        animationPlaying: false
     }
     self.updatePosition = function () {
         if (self.pressingRight)
@@ -38,34 +37,40 @@ var Player = function (id) {
 io.sockets.on('connection', function (socket) {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
-    console.log('client_connection');
+    PLAYER_LIST[socket.id] = Player(socket.id);
+
+    // Send newly connected player their own info, and other's info
+    socket.emit('playerJoined', {id: socket.id, players: PLAYER_LIST});
+
+    // Notify everyone else that you joined
+    socket.broadcast.emit('otherPlayerJoined', PLAYER_LIST[socket.id]);
 
     socket.on('chatMessageToServer', (message) => {
         io.sockets.emit('chatMessageToClients', message);
     });
 
     socket.on('playerPositionToServer', (message) => {
-        io.sockets.emit('chatMessageToClients', message);
+        // Update player position in server state
+        console.log(message.posX);
+        // io.sockets.emit('chatMessageToClients', message);
     });
 
-    var player = Player(socket.id);
-    PLAYER_LIST[socket.id] = player;
 
     socket.on('disconnect', function () {
         delete SOCKET_LIST[socket.id];
         delete PLAYER_LIST[socket.id];
     });
 
-    socket.on('keyPress', function (data) {
-        if (data.inputId === 'left')
-            player.pressingLeft = data.state;
-        else if (data.inputId === 'right')
-            player.pressingRight = data.state;
-        else if (data.inputId === 'up')
-            player.pressingUp = data.state;
-        else if (data.inputId === 'down')
-            player.pressingDown = data.state;
-    });
+    // socket.on('keyPress', function (data) {
+    //     if (data.inputId === 'left')
+    //         player.pressingLeft = data.state;
+    //     else if (data.inputId === 'right')
+    //         player.pressingRight = data.state;
+    //     else if (data.inputId === 'up')
+    //         player.pressingUp = data.state;
+    //     else if (data.inputId === 'down')
+    //         player.pressingDown = data.state;
+    // });
 });
 
 setInterval(function () {
@@ -83,4 +88,4 @@ setInterval(function () {
         var socket = SOCKET_LIST[i];
         socket.emit('newPositions', pack);
     }
-}, 1000/60);
+}, 1000/30);

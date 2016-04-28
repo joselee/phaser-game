@@ -37,16 +37,30 @@ namespace PhaserGame {
             this.mapLayers.blockedLayer.alpha = 0;
             this.mapLayers.bgLayer.resizeWorld(); // set world boundaries to map size
 
-            // Instantiate the player.
-            let player = new Player(this.game, 180, 300, 'girl', this.mapLayers);
-            this.game.add.existing(player);
-            this.game.camera.follow(player);
-
             // Listens for angular event to toggle game keyboard bindings.
             this.game.rootScope.$on('setFocusToChat', (event, chatFocused) => {
                 this.game.input.keyboard.enabled = !chatFocused; // Game consumes keyboard input only if chat doesn't have focus
                 this.game.input.keyboard.reset(false);
             });
+
+            this.game.rootScope.$on('playerJoined', (event, data) => {
+                // Instantiate the player.
+                let playerData: IPlayerData = data.players[data.id];
+                let player = new Player(this.game, playerData, 'girl', this.mapLayers);
+                this.game.add.existing(player);
+                this.game.camera.follow(player);
+            });
+            
+            this.game.rootScope.$on('otherPlayerJoined', (event, playerData: IPlayerData) => {
+                let otherPlayer = new Player(this.game, playerData, 'girl', this.mapLayers);
+                this.game.add.existing(otherPlayer);
+            });
+
+            this.game.rootScope.$on('updatePlayerPositions', (data) => {
+
+            });
+            
+            this.game.socketService.connect();
         }
     }
 

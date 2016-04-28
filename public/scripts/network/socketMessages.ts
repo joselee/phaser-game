@@ -3,12 +3,13 @@ namespace PhaserGame {
         playerName: string;
         text: string;
     }
-    export interface IPlayerPositionUpdateMessage {
+    export interface IPlayerData {
+        id: number;
         posX: number;
         posY: number;
         velX: number;
         velY: number;
         animation: string;
-        timestamp: Date;
+        animationPlaying: boolean;
     }
 }

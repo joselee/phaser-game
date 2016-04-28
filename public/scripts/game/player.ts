@@ -4,13 +4,14 @@ namespace PhaserGame {
         animationSpeed: number = 10;
         movementSpeed: number = 100;
         controls: IKeyboardControls;
-        lastUpdateMsg: IPlayerPositionUpdateMessage;
-        updateMsg: IPlayerPositionUpdateMessage;
+        lastPlayerData: IPlayerData;
+        playerId: number;
 
-        constructor(game: IPhaserAngularGame, x: number, y: number, spriteSheetId: string, private mapLayers: IMapLayers) {
-            super(game, x, y, spriteSheetId);
+        constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers: IMapLayers) {
+            super(game, playerData.posX, playerData.posY, spriteSheetId);
             this.game = game;
             this.game.physics.arcade.enable(this);
+            this.playerId = playerData.id;
 
             this.animations.add('walkDown', [0, 1, 2]);
             this.animations.add('walkLeft', [3, 4, 5]);
@@ -83,15 +84,20 @@ namespace PhaserGame {
         }
         sendUpdateToServer() {
             setInterval(() => {
-                this.updateMsg = {
+                let updatedPlayerData: IPlayerData = {
+                    id: this.playerId,
                     posX: this.body.position.x,
                     posY: this.body.position.y,
                     velX: this.body.velocity.x,
                     velY: this.body.velocity.y,
                     animation: this.animations.currentAnim.name,
-                    timestamp: new Date()
-                };
-                this.game.socketService.playerPositionToServer(this.updateMsg);
+                    animationPlaying: this.animations.currentAnim.isPlaying
+                }
+
+                if(!angular.equals(this.lastPlayerData, updatedPlayerData)){
+                    this.lastPlayerData = updatedPlayerData;
+                    this.game.socketService.playerPositionToServer(updatedPlayerData);
+                }
             }, 1000/30);
         }
     }

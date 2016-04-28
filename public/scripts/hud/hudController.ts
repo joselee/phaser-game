@@ -10,7 +10,7 @@ namespace PhaserGame {
             this.messages.push({playerName: '', text: 'Welcome!'});
             this.messages.push({playerName: '', text: 'You have joined as: ' + this.playerName});
 
-            $rootScope.$on('addMessageToChatbox', (event: ng.IAngularEvent, message: IChatMessage) => {
+            $rootScope.$on('chatMessageToClients', (event: ng.IAngularEvent, message: IChatMessage) => {
                 $rootScope.$apply(() => {
                     this.messages.push(message)
                 });
