@@ -3,8 +3,10 @@ namespace PhaserGame {
         foo: string;
         game: Game;
         
-        static $inject = ['gameService', '$rootScope'];
-        constructor(private gameService: GameService, private $rootScope: ng.IRootScopeService) {
+        static $inject = ['gameService', '$rootScope', 'socketService'];
+        constructor(private gameService: GameService,
+                    private $rootScope: ng.IRootScopeService,
+                    private socketService: SocketService) {
             this.foo = gameService.getFoo();
             this.game = new Game($rootScope);
         }
