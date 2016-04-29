@@ -4,7 +4,7 @@
   "description": "This is an interactive lobby game. Players can join a room, walk around with their characters, and chat in real time. This project is an experiment, to create a real-time multiplayer game with Node.js, Express.js, Socket.io, Angular.js, Phaser.io, and Typescript.",
   "main": "server.js",
   "scripts": {
-      "postinstall": "gulp build"
+    "postinstall": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "angular-bootstrap": "^0.12.2",
     "angular-ui-router": "^0.2.18",
     "bootstrap": "^3.3.6",
+    "compression": "^1.6.1",
     "del": "^2.2.0",
     "express": "^4.13.4",
     "gulp": "^3.9.1",
