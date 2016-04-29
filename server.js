@@ -3,6 +3,7 @@ let express = require('express');
 let app = express();
 let server = require('http').Server(app);
 let io = require('socket.io')(server, {});
+app.use(express.compress());
 app.use('/', express.static(__dirname + '/public'));
 
 let SOCKET_LIST = {};
