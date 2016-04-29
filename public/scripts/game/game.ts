@@ -57,20 +57,14 @@ namespace PhaserGame {
                 for (let playerId in data.players) {
                     if (playerId !== this.player.playerId) {
                         this.game.rootScope.$emit('otherPlayerJoined', data.players[playerId]);
-                        // let otherPlayerData = data.players[playerId];
-                        // let otherPlayer = new OtherPlayer(this.game, otherPlayerData, 'girl', this.mapLayers);
-                        // this.game.add.existing(otherPlayer);
-                        // this.players
                     }
                 }
             });
             
             this.game.rootScope.$on('otherPlayerJoined', (event, playerData: IPlayerData) => {
-                if(playerData.id !== this.player.playerId){
-                    let otherPlayer = new OtherPlayer(this.game, playerData, 'girl', this.mapLayers);
-                    this.game.add.existing(otherPlayer);
-                    this.players[playerData.id] = otherPlayer;
-                }
+                let otherPlayer = new OtherPlayer(this.game, playerData, 'girl', this.mapLayers);
+                this.game.add.existing(otherPlayer);
+                this.players[playerData.id] = otherPlayer;
             });
 
             this.game.rootScope.$on('updatePlayerPositions', (event, updatedPlayers) => {
