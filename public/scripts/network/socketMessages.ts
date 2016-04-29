@@ -4,7 +4,7 @@ namespace PhaserGame {
         text: string;
     }
     export interface IPlayerData {
-        id: number;
+        id: string;
         posX: number;
         posY: number;
         velX: number;

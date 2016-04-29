@@ -3,6 +3,8 @@ namespace PhaserGame {
         game: IPhaserAngularGame;
         map: Phaser.Tilemap;
         mapLayers: IMapLayers;
+        player: PhaserGame.Player;
+        players: {[playerId: string]: PhaserGame.OtherPlayer};
 
         constructor($rootScope: ng.IRootScopeService, socketService: SocketService) {
             this.game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
@@ -46,18 +48,39 @@ namespace PhaserGame {
             this.game.rootScope.$on('playerJoined', (event, data) => {
                 // Instantiate the player.
                 let playerData: IPlayerData = data.players[data.id];
-                let player = new Player(this.game, playerData, 'girl', this.mapLayers);
-                this.game.add.existing(player);
-                this.game.camera.follow(player);
+                this.player = new Player(this.game, playerData, 'girl', this.mapLayers);
+                this.game.add.existing(this.player);
+                this.game.camera.follow(this.player);
+                this.players = {};
+
+                // Instantiate other players already in the game
+                for (let playerId in data.players) {
+                    if (playerId !== this.player.playerId) {
+                        this.game.rootScope.$emit('otherPlayerJoined', data.players[playerId]);
+                        // let otherPlayerData = data.players[playerId];
+                        // let otherPlayer = new OtherPlayer(this.game, otherPlayerData, 'girl', this.mapLayers);
+                        // this.game.add.existing(otherPlayer);
+                        // this.players
+                    }
+                }
             });
             
             this.game.rootScope.$on('otherPlayerJoined', (event, playerData: IPlayerData) => {
-                let otherPlayer = new Player(this.game, playerData, 'girl', this.mapLayers);
-                this.game.add.existing(otherPlayer);
+                if(playerData.id !== this.player.playerId){
+                    let otherPlayer = new OtherPlayer(this.game, playerData, 'girl', this.mapLayers);
+                    this.game.add.existing(otherPlayer);
+                    this.players[playerData.id] = otherPlayer;
+                }
             });
 
-            this.game.rootScope.$on('updatePlayerPositions', (data) => {
-
+            this.game.rootScope.$on('updatePlayerPositions', (event, updatedPlayers) => {
+                for (let playerId in updatedPlayers) {
+                    if (playerId !== this.player.playerId) {
+                        let otherPlayer = this.players[playerId];
+                        let updatedData = updatedPlayers[playerId];
+                        otherPlayer.movePlayer(updatedData);
+                    }
+                }
             });
             
             this.game.socketService.connect();

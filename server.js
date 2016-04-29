@@ -9,7 +9,7 @@ console.log("Server started on port 8080");
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
-var updatedPlayers = [];
+var UPDATED_PLAYERS = {};
 
 var Player = function (id) {
     var self = {
@@ -35,23 +35,25 @@ var Player = function (id) {
 }
 
 io.sockets.on('connection', function (socket) {
-    socket.id = Math.random();
+    socket.id = (Math.random() + 1).toString(36).substring(2);
     SOCKET_LIST[socket.id] = socket;
     PLAYER_LIST[socket.id] = Player(socket.id);
 
-    // Send newly connected player their own info, and other's info
-    socket.emit('playerJoined', {id: socket.id, players: PLAYER_LIST});
-
-    // Notify everyone else that you joined
-    socket.broadcast.emit('otherPlayerJoined', PLAYER_LIST[socket.id]);
+    socket.on('playerJoined', () => {
+        // Send newly connected player their own info, and other's info
+        socket.emit('playerJoined', {id: socket.id, players: PLAYER_LIST});
+        // Notify everyone else that you joined
+        socket.broadcast.emit('otherPlayerJoined', PLAYER_LIST[socket.id]);
+    });
 
     socket.on('chatMessageToServer', (message) => {
         io.sockets.emit('chatMessageToClients', message);
     });
 
-    socket.on('playerPositionToServer', (message) => {
+    socket.on('playerPositionToServer', (playerData) => {
         // Update player position in server state
-        console.log(message.posX);
+        PLAYER_LIST[playerData.id] = playerData;
+        UPDATED_PLAYERS[playerData.id] = playerData;
         // io.sockets.emit('chatMessageToClients', message);
     });
 
@@ -74,18 +76,22 @@ io.sockets.on('connection', function (socket) {
 });
 
 setInterval(function () {
-    var pack = [];
-    for (var i in PLAYER_LIST) {
-        var player = PLAYER_LIST[i];
-        player.updatePosition();
-        pack.push({
-            x: player.x,
-            y: player.y,
-            number: player.number
-        });
+    // var pack = [];
+    // for (var i in PLAYER_LIST) {
+    //     var player = PLAYER_LIST[i];
+    //     player.updatePosition();
+    //     pack.push({
+    //         x: player.x,
+    //         y: player.y,
+    //         number: player.number
+    //     });
+    // }
+    // for (var i in SOCKET_LIST) {
+    //     var socket = SOCKET_LIST[i];
+    //     socket.emit('newPositions', pack);
+    // }
+    if(Object.keys(UPDATED_PLAYERS).length > 0){
+        io.sockets.emit('updatePlayerPositions', UPDATED_PLAYERS);
+        UPDATED_PLAYERS = {};
     }
-    for (var i in SOCKET_LIST) {
-        var socket = SOCKET_LIST[i];
-        socket.emit('newPositions', pack);
-    }
-}, 1000/30);
+}, 1000/60);

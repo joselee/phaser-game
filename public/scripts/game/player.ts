@@ -5,7 +5,7 @@ namespace PhaserGame {
         movementSpeed: number = 100;
         controls: IKeyboardControls;
         lastPlayerData: IPlayerData;
-        playerId: number;
+        playerId: string;
 
         constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers: IMapLayers) {
             super(game, playerData.posX, playerData.posY, spriteSheetId);
@@ -98,7 +98,7 @@ namespace PhaserGame {
                     this.lastPlayerData = updatedPlayerData;
                     this.game.socketService.playerPositionToServer(updatedPlayerData);
                 }
-            }, 1000/30);
+            }, 1000/60);
         }
     }
 
