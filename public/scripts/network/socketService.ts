@@ -19,6 +19,9 @@ namespace PhaserGame {
             this.socket.on('chatMessageToClients', (message: IChatMessage) => {
                 this.$rootScope.$emit('chatMessageToClients', message);
             });
+            this.socket.on('otherPlayerLeft', (playerId: string) => {
+                this.$rootScope.$emit('otherPlayerLeft', playerId);
+            });
         }
 
         chatMessageToServer(message: IChatMessage){

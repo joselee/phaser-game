@@ -76,6 +76,11 @@ namespace PhaserGame {
                     }
                 }
             });
+
+            this.game.rootScope.$on('otherPlayerLeft', (event, playerId) => {
+                if(this.players[playerId])
+                    this.players[playerId].destroy();
+            });
             
             this.game.socketService.connect();
         }

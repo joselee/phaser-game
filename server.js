@@ -42,6 +42,7 @@ io.sockets.on('connection',  (socket) => {
     socket.on('disconnect', () => {
         delete SOCKET_LIST[socket.id];
         delete PLAYER_LIST[socket.id];
+        io.sockets.emit('otherPlayerLeft', socket.id);
     });
 });
 
