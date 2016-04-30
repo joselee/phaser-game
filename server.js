@@ -23,11 +23,11 @@ let Player = (id) => {
     }
 }
 
-io.sockets.on('connection',  (socket) => {
+io.sockets.on('connection', (socket) => {
     SOCKET_LIST[socket.id] = socket;
     PLAYER_LIST[socket.id] = Player(socket.id);
 
-    socket.emit('playerJoined', {id: socket.id, players: PLAYER_LIST});
+    socket.emit('playerJoined', { id: socket.id, players: PLAYER_LIST });
     socket.broadcast.emit('otherPlayerJoined', PLAYER_LIST[socket.id]);
 
     socket.on('chatMessageToServer', (message) => {
@@ -49,11 +49,11 @@ io.sockets.on('connection',  (socket) => {
 });
 
 setInterval(() => {
-    if(Object.keys(UPDATED_PLAYERS).length > 0){
+    if (Object.keys(UPDATED_PLAYERS).length > 0) {
         io.sockets.emit('updatePlayerPositions', UPDATED_PLAYERS);
         UPDATED_PLAYERS = {};
     }
-}, 1000/60);
+}, 1000 / 60);
 
 const port = process.env.NODE_ENV === 'production' ? 80 : 8080;
 server.listen(port);

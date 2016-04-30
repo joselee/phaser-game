@@ -1,28 +1,38 @@
 var gulp = require('gulp');
 var del = require('del');
+var merge = require('merge-stream');
 var concat = require('gulp-concat');
 var less = require('gulp-less');
 var ts = require('gulp-typescript');
 var tsLint = require('gulp-tslint');
 var sourcemaps = require('gulp-sourcemaps');
+var uglify = require('gulp-uglify');
+var gulpif = require('gulp-if');
 var listFiles = require('gulp-filesize'); /* .pipe(listFiles()) to see files in stream*/
 var gutil = require('gulp-util');
 var tsProject = ts.createProject('tsconfig.json', { sortOutput: true });
+var dev = (process.env.NODE_ENV !== 'production');
 
-gulp.task('default', ['build'], function () {
+gulp.task('default', ['fastbuild'], function () {
     gulp.watch(['public/styles/**/*.less'], ['styles']);
     gulp.watch(['public/scripts/**/*.ts'], ['scripts']);
 });
 
-gulp.task('build', ['libs', 'styles', 'scripts']);
+gulp.task('build', ['clean', 'libs', 'styles', 'scripts']);
+gulp.task('fastbuild', ['styles', 'scripts']);
+
+gulp.task('clean', function () {
+    del.sync('public/build/**/*');
+    del.sync('public/build');
+});
 
 gulp.task('styles', function () {
     del.sync('public/build/*.css');
-    gulp.src(['public/styles/**/*.less'])
-        .pipe(sourcemaps.init())
+    return gulp.src(['public/styles/**/*.less'])
+        .pipe(gulpif(dev, sourcemaps.init()))
         .pipe(less())
         .pipe(concat('app.css'))
-        .pipe(sourcemaps.write())
+        .pipe(gulpif(dev, sourcemaps.write()))
         .on('error', gutil.log)
         .pipe(gulp.dest('public/build'));
 });
@@ -34,10 +44,11 @@ gulp.task('scripts', function () {
         'public/scripts/**/*Module.ts',
         'public/scripts/**/*.ts'
     ];
-    gulp.src(scripts)
-        .pipe(sourcemaps.init())
+    return gulp.src(scripts)
+        .pipe(gulpif(dev, sourcemaps.init()))
         .pipe(ts(tsProject))
-        .pipe(sourcemaps.write())
+        .pipe(uglify())
+        .pipe(gulpif(dev, sourcemaps.write()))
         .pipe(gulp.dest('public/build'));
 });
 
@@ -46,13 +57,9 @@ gulp.task('libs', function () {
 
     var libs = {
         js: [
-            'node_modules/jquery/dist/jquery.min.js',
-            'node_modules/lodash/lodash.min.js',
-            'node_modules/bootstrap/dist/bootstrap.min.js',
-            'node_modules/angular/angular.min.js',
-            'node_modules/angular-bootstrap/ui-bootstrap-tpls.min.js',
-            'node_modules/angular-ui-router/release/angular-ui-router.min.js',
-            'node_modules/phaser/dist/phaser.min.js',
+            'node_modules/jquery/dist/jquery.slim.js',
+            'node_modules/angular/angular.js',
+            'node_modules/phaser/dist/phaser.js',
             'node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
             'node_modules/socket.io-client/socket.io.js'
         ],
@@ -64,13 +71,16 @@ gulp.task('libs', function () {
         ]
     };
 
-    gulp.src(libs.js)
+    var libsJS = gulp.src(libs.js)
         .pipe(concat('libs.js'))
+        .pipe(uglify())
         .pipe(gulp.dest('public/build/libs'));
-    gulp.src(libs.styles)
+    var libsCSS = gulp.src(libs.styles)
         .pipe(less())
         .pipe(concat('libs.css'))
         .pipe(gulp.dest('public/build/libs'));
-    gulp.src(libs.fonts)
+    var libsFonts = gulp.src(libs.fonts)
         .pipe(gulp.dest('public/build/fonts'));
+        
+    return merge(libsJS, libsCSS, libsFonts);
 });
