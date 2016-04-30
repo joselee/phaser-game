@@ -22,6 +22,11 @@ main {
         color: @darkGray;
         font-size: 10px;
         font-style: italic;
+
+        .command-example {
+            font-style: normal;
+            font-family: monospace;
+        }
     }
 }
 
@@ -88,6 +93,10 @@ main {
             &:focus:-moz-placeholder { color:transparent; text-shadow: none; }
             &:focus::-moz-placeholder { color:transparent; text-shadow: none; }
             &:focus:-ms-input-placeholder { color:transparent; text-shadow: none; }
+        }
+
+        .system-message {
+            color: yellow;
         }
     }
 }

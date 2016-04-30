@@ -49,6 +49,7 @@ namespace PhaserGame {
                 // Instantiate the player.
                 let playerData: IPlayerData = data.players[data.id];
                 this.player = new Player(this.game, playerData, 'girl', this.mapLayers);
+                this.game.rootScope.$emit('addMessageToMessageBox', {type: 'system', text: 'You have joined as ' + this.player.playerName});
                 this.game.add.existing(this.player);
                 this.game.camera.follow(this.player);
                 this.players = {};

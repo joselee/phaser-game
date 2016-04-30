@@ -4,6 +4,7 @@ let express = require('express');
 let app = express();
 let server = require('http').Server(app);
 let io = require('socket.io')(server, {});
+let _ = require('lodash');
 app.use(compression());
 app.use('/', express.static(__dirname + '/public'));
 
@@ -14,10 +15,9 @@ let UPDATED_PLAYERS = {};
 let Player = (id) => {
     return {
         id: id,
+        playerName: 'Player_' + Math.floor(1 + Math.random() * 100000),
         posX: 180,
         posY: 300,
-        velX: 0,
-        velY: 0,
         animation: 'walkDown',
         animationPlaying: false
     }
@@ -55,12 +55,27 @@ io.sockets.on('connection', (socket) => {
         socket.emit('commandResponse', response);
     });
 
-    socket.on('chatMessageToServer', (message) => {
-        io.sockets.emit('chatMessageToClients', message);
+    socket.on('changeNick', (nick) => {
+        let existingNick = _.find(PLAYER_LIST, p => p.playerName === nick);
+        if (existingNick) {
+            let alreadyTaken = { type: 'system', text: 'Nickname ' + nick + ' is already taken.' };
+            socket.emit('chatMessageToClients', alreadyTaken);
+        }
+        else {
+            let oldNick = PLAYER_LIST[socket.id].playerName;
+            PLAYER_LIST[socket.id].playerName = nick;
+            let announcement = { type: 'system', text: oldNick + ' is now known as ' + nick };
+            io.sockets.emit('chatMessageToClients', announcement);
+        }
     });
 
-    socket.on('playerPositionToServer', (playerData) => {
-        // Update player position in server state
+    socket.on('chatMessageToServer', (message) => {
+        let chatMessage = { playerName: PLAYER_LIST[socket.id].playerName, text: message };
+        io.sockets.emit('chatMessageToClients', chatMessage);
+    });
+
+    socket.on('updatePlayerData', (playerData) => {
+        // Update player data in server state
         PLAYER_LIST[playerData.id] = playerData;
         UPDATED_PLAYERS[playerData.id] = playerData;
     });
@@ -82,4 +97,4 @@ setInterval(() => {
 
 const port = process.env.NODE_ENV === 'production' ? 80 : 8080;
 server.listen(port);
-console.log("Server started on port " + port);
+console.info("Server started on port " + port);

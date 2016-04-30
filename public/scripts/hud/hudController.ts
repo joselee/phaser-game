@@ -1,22 +1,19 @@
 namespace PhaserGame {
     class HudController {
-        playerName: string;
         message: string = '';
         messages: IChatMessage[] = [];
 
         static $inject = ['$rootScope', 'socketService'];
         constructor($rootScope: ng.IRootScopeService, private socketService: SocketService) {
-            this.setPlayerName();
-            this.messages.push({playerName: '', text: 'Welcome!'});
-            this.messages.push({playerName: '', text: 'You have joined as: ' + this.playerName});
+            this.messages.push({ type: 'system', text: 'Welcome!' });
 
             $rootScope.$on('commandResponse', (event: ng.IAngularEvent, response: string) => {
                 $rootScope.$apply(() => {
-                    this.messages.push({playerName: '', text: response});
+                    this.messages.push({ type: 'system', text: response });
                 });
             });
-            
-            $rootScope.$on('chatMessageToClients', (event: ng.IAngularEvent, message: IChatMessage) => {
+
+            $rootScope.$on('addMessageToMessageBox', (event: ng.IAngularEvent, message: IChatMessage) => {
                 $rootScope.$apply(() => {
                     this.messages.push(message)
                 });
@@ -24,20 +21,43 @@ namespace PhaserGame {
         }
 
         chatFormSubmit() {
-            if(this.message){
+            if (this.message) {
                 if (this.message.indexOf('/') === 0) {
-                    this.socketService.commandToServer(this.message);
-                } else {
-                    this.socketService.chatMessageToServer({playerName: this.playerName, text: this.message});
+                    if (this.message.trim() === '/clear') {
+                        this.messages = [];
+                    }
+                    else if (this.message.indexOf('/nick ') === 0) {
+                        let split = this.message.split('/nick ');
+                        if (split.length === 2) {
+                            let regex = /^[a-zA-Z0-9-_.]+$/;
+                            let nick = split[1];
+                            if (nick.search(regex) === 0) {
+                                this.socketService.changeNick(nick);
+                            }
+                            else {
+                                this.messages.push({
+                                    type: 'system',
+                                    text: 'Nicknames can only contain letters, numbers, hyphens, underscores, and dots!'
+                                });
+                            }
+                        }
+                        else {
+                            this.messages.push({
+                                type: 'system',
+                                text: 'Wtf are you trying to do?'
+                            });
+                        }
+                    }
+                    else {
+                        this.socketService.commandToServer(this.message);
+                    }
+                }
+                else {
+                    // Normal chat message
+                    this.socketService.chatMessageToServer(this.message);
                 }
             }
             this.message = '';
-        }
-        
-        setPlayerName() {
-            let tempName = 'Player_' + Math.floor(1+Math.random() * 100000);
-            // let nickname = prompt('Enter a nickname:');
-            this.playerName = tempName;
         }
     }
 

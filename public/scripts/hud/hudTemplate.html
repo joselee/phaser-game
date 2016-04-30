@@ -3,7 +3,7 @@
         <ul class="chat-history" scroll-chat-bottom="hudCtrl.messages">
             <li class="chat-message" ng-repeat="message in hudCtrl.messages">
                 <span class="player-name" ng-if="message.playerName">{{::message.playerName}}: </span>
-                <span class="message-text"> {{::message.text}}</span>
+                <span class="message-text" ng-class="{'system-message': message.type === 'system'}"> {{::message.text}}</span>
             </li>
         </ul>
         <form name="chatForm" ng-submit="hudCtrl.chatFormSubmit()">

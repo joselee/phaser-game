@@ -6,12 +6,14 @@ namespace PhaserGame {
         controls: IKeyboardControls;
         lastPlayerData: IPlayerData;
         playerId: string;
+        playerName: string;
 
         constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers: IMapLayers) {
             super(game, playerData.posX, playerData.posY, spriteSheetId);
             this.game = game;
             this.game.physics.arcade.enable(this);
             this.playerId = playerData.id;
+            this.playerName = playerData.playerName;
 
             this.animations.add('walkDown', [0, 1, 2]);
             this.animations.add('walkLeft', [3, 4, 5]);
@@ -86,17 +88,16 @@ namespace PhaserGame {
             setInterval(() => {
                 let updatedPlayerData: IPlayerData = {
                     id: this.playerId,
+                    playerName: this.playerName,
                     posX: this.body.position.x,
                     posY: this.body.position.y,
-                    velX: this.body.velocity.x,
-                    velY: this.body.velocity.y,
                     animation: this.animations.currentAnim.name,
                     animationPlaying: this.animations.currentAnim.isPlaying
                 }
 
                 if(!angular.equals(this.lastPlayerData, updatedPlayerData)){
                     this.lastPlayerData = updatedPlayerData;
-                    this.game.socketService.playerPositionToServer(updatedPlayerData);
+                    this.game.socketService.updatePlayerData(updatedPlayerData);
                 }
             }, 1000/60);
         }

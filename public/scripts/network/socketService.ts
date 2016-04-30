@@ -2,7 +2,7 @@ namespace PhaserGame {
     export class SocketService {
         socket: SocketIOClient.Socket;
         static $inject = ['$rootScope'];
-        constructor(private $rootScope: ng.IRootScopeService){
+        constructor(private $rootScope: ng.IRootScopeService) {
         }
 
         connect() {
@@ -20,21 +20,24 @@ namespace PhaserGame {
                 this.$rootScope.$emit('commandResponse', response);
             });
             this.socket.on('chatMessageToClients', (message: IChatMessage) => {
-                this.$rootScope.$emit('chatMessageToClients', message);
+                this.$rootScope.$emit('addMessageToMessageBox', message);
             });
             this.socket.on('otherPlayerLeft', (playerId: string) => {
                 this.$rootScope.$emit('otherPlayerLeft', playerId);
             });
         }
 
-        commandToServer(message: string){
+        commandToServer(message: string) {
             this.socket.emit('commandToServer', message);
         }
-        chatMessageToServer(message: IChatMessage){
+        chatMessageToServer(message: string) {
             this.socket.emit('chatMessageToServer', message);
         }
-        playerPositionToServer(message: IPlayerData){
-            this.socket.emit('playerPositionToServer', message);
+        updatePlayerData(message: IPlayerData) {
+            this.socket.emit('updatePlayerData', message);
+        }
+        changeNick(nick: string) {
+            this.socket.emit('changeNick', nick);
         }
     }
 
