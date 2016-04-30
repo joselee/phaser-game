@@ -6,7 +6,7 @@
                 <span class="message-text"> {{::message.text}}</span>
             </li>
         </ul>
-        <form name="chatForm" ng-submit="hudCtrl.chatMessageToServer()">
+        <form name="chatForm" ng-submit="hudCtrl.chatFormSubmit()">
             <input type="text"
                    class="chat-input"
                    placeholder="Click here (or press enter) to chat"

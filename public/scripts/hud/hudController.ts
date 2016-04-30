@@ -10,6 +10,12 @@ namespace PhaserGame {
             this.messages.push({playerName: '', text: 'Welcome!'});
             this.messages.push({playerName: '', text: 'You have joined as: ' + this.playerName});
 
+            $rootScope.$on('commandResponse', (event: ng.IAngularEvent, response: string) => {
+                $rootScope.$apply(() => {
+                    this.messages.push({playerName: '', text: response});
+                });
+            });
+            
             $rootScope.$on('chatMessageToClients', (event: ng.IAngularEvent, message: IChatMessage) => {
                 $rootScope.$apply(() => {
                     this.messages.push(message)
@@ -17,9 +23,13 @@ namespace PhaserGame {
             });
         }
 
-        chatMessageToServer() {
+        chatFormSubmit() {
             if(this.message){
-                this.socketService.chatMessageToServer({playerName: this.playerName, text: this.message});
+                if (this.message.indexOf('/') === 0) {
+                    this.socketService.commandToServer(this.message);
+                } else {
+                    this.socketService.chatMessageToServer({playerName: this.playerName, text: this.message});
+                }
             }
             this.message = '';
         }

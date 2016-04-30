@@ -30,6 +30,11 @@ io.sockets.on('connection', (socket) => {
     socket.emit('playerJoined', { id: socket.id, players: PLAYER_LIST });
     socket.broadcast.emit('otherPlayerJoined', PLAYER_LIST[socket.id]);
 
+    socket.on('commandToServer', (command) => {
+        let response = 'asdf';
+        socket.emit('commandResponse', response);
+    });
+    
     socket.on('chatMessageToServer', (message) => {
         io.sockets.emit('chatMessageToClients', message);
     });
