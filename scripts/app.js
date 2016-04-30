@@ -8,16 +8,14 @@ function preload() {
     // Load map json, and all pngs used by map
     game.load.tilemap('world', 'assets/world2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('worldpng', 'assets/worldpng.png');
-    game.load.image('treetrunk', 'assets/treetrunk.png');
-    game.load.image('treetop', 'assets/treetop.png');
+    game.load.image('tree', 'assets/tree.png');
     game.load.image('collision', 'assets/collision.png');
     game.load.spritesheet('player', 'assets/player.png', 32, 32);
 }
 function create() {
     map = game.add.tilemap('world');
     map.addTilesetImage('worldpng', 'worldpng');
-    map.addTilesetImage('treetrunk', 'treetrunk');
-    map.addTilesetImage('treetop', 'treetop');
+    map.addTilesetImage('tree', 'tree');
     map.addTilesetImage('collision', 'collision');
 
     // Order of creating layers and adding sprites matter for z-index
