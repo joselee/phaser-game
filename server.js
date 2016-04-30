@@ -31,10 +31,30 @@ io.sockets.on('connection', (socket) => {
     socket.broadcast.emit('otherPlayerJoined', PLAYER_LIST[socket.id]);
 
     socket.on('commandToServer', (command) => {
-        let response = 'asdf';
+        let response;
+        switch (command) {
+            case '/player_count':
+                response = Object.keys(PLAYER_LIST).length;
+                break;
+            case '/player_list':
+                response = Object.keys(PLAYER_LIST).join(', ');
+                break;
+            case '/kick_all':
+                for (let socketid in SOCKET_LIST) {
+                    if (socketid !== socket.id) {
+                        SOCKET_LIST[socketid].disconnect();
+                        delete SOCKET_LIST[socketid];
+                        delete PLAYER_LIST[socketid];
+                    }
+                }
+                response = 'All other players have been kicked.';
+                break;
+            default:
+                response = 'Command not found.';
+        }
         socket.emit('commandResponse', response);
     });
-    
+
     socket.on('chatMessageToServer', (message) => {
         io.sockets.emit('chatMessageToClients', message);
     });
