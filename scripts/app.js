@@ -2,7 +2,7 @@ var map;
 var player;
 var controls;
 var layers = {};
-var game = new Phaser.Game(480, 320, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(480, 320, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
     // Load map json, and all pngs used by map
@@ -33,7 +33,9 @@ function create() {
     player.animations.add('walkRight', [6, 7, 8]);
     player.animations.add('walkUp', [9, 10, 11]);
     player.anchor.x = 0.5;
-    player.anchor.y = 0.5;
+    player.anchor.y = 1;
+    player.body.width = 20;
+    player.body.height = 25;
 
     controls = {
         up: game.input.keyboard.addKey(Phaser.Keyboard.UP),
@@ -81,3 +83,8 @@ function update() {
         player.animations.stop();
     }
 }
+
+function render() {
+    // game.debug.bodyInfo(player);
+    // game.debug.body(player);
+} 
