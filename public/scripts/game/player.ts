@@ -12,8 +12,10 @@ namespace PhaserGame {
             super(game, playerData.posX, playerData.posY, spriteSheetId);
             this.game = game;
             this.game.physics.arcade.enable(this);
+            this.anchor.set(0.5);
             this.playerId = playerData.id;
             this.playerName = playerData.playerName;
+            this.game.target = null;
 
             this.animations.add('walkDown', [0, 1, 2]);
             this.animations.add('walkLeft', [3, 4, 5]);
@@ -30,6 +32,19 @@ namespace PhaserGame {
                 a: this.game.input.keyboard.addKey(Phaser.Keyboard.A),
                 d: this.game.input.keyboard.addKey(Phaser.Keyboard.D)
             };
+            this.game.input.onDown.add((pointer) => {
+                let threshold = 2;
+                this.game.target = { 
+                    x: {
+                        min: pointer.worldX - threshold,
+                        max: pointer.worldX + threshold
+                    },
+                    y: {
+                        min: pointer.worldY - threshold,
+                        max: pointer.worldY + threshold
+                    }
+                };
+            }, this);
 
             this.sendUpdateToServer();
         }
@@ -66,6 +81,30 @@ namespace PhaserGame {
                 velocity.x = -this.movementSpeed;
             else if (right)
                 velocity.x = this.movementSpeed;
+
+            // Mouse click movement - Keyboard movement interrupts mouse movement
+            if (this.game.target !== null && !(up || down || left || right)) {
+                let x = this.position.x;
+                let y = this.position.y;
+                let xMin = this.game.target.x.min;
+                let xMax = this.game.target.x.max;
+                let yMin = this.game.target.y.min;
+                let yMax = this.game.target.y.max;
+
+                // Decide which directions to move in by comparing current position and target position
+                if (x < xMin)
+                    velocity.x = this.movementSpeed;
+                else if (x > xMax)
+                    velocity.x = -this.movementSpeed;
+                if (y < yMin)
+                    velocity.y = this.movementSpeed;
+                else if (y > yMax)
+                    velocity.y = -this.movementSpeed;
+                    
+                // Destination reached
+                if (x > xMin && x < xMax && y > yMin && y < yMax)
+                    this.game.target = null;
+            }
         }
         animateMovement(velocity) {
             // Vertical movement

@@ -23,8 +23,7 @@ namespace PhaserGame {
             this.stage.disableVisibilityChange = true;
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             this.scale.pageAlignHorizontally = true;
-            let portrait = true;
-            
+
             if (this.game.device.desktop) {
                 this.scale.setMinMax(0, 0, 720, 405);
             } else {
@@ -33,6 +32,7 @@ namespace PhaserGame {
                 this.scale.forceOrientation(false, true);
                 this.scale.enterIncorrectOrientation.add(()=>{
                     //Show 'go to portrait' dialog
+                    alert('Hey, you should turn your mobile device to portrait mode for a better experience.');
                 });
                 this.scale.leaveIncorrectOrientation.add(()=>{
                     //Hide 'go to portrait' dialog
@@ -115,6 +115,7 @@ namespace PhaserGame {
     export interface IPhaserAngularGame extends Phaser.Game {
         rootScope?: ng.IRootScopeService;
         socketService?: SocketService;
+        target?: any;
     }
 
     export interface IMapLayers {
