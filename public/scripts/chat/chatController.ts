@@ -1,5 +1,5 @@
 namespace PhaserGame {
-    class HudController {
+    class ChatController {
         message: string = '';
         messages: IChatMessage[] = [];
 
@@ -61,5 +61,5 @@ namespace PhaserGame {
         }
     }
 
-    app.controller('hudController', HudController);
+    app.controller('chatController', ChatController);
 }

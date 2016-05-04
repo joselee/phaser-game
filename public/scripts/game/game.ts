@@ -1,5 +1,5 @@
 namespace PhaserGame {
-    export class Game {
+    export class Game extends Phaser.State{
         game: IPhaserAngularGame;
         map: Phaser.Tilemap;
         mapLayers: IMapLayers;
@@ -7,12 +7,37 @@ namespace PhaserGame {
         players: {[playerId: string]: PhaserGame.OtherPlayer};
 
         constructor($rootScope: ng.IRootScopeService, socketService: SocketService) {
-            this.game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
+            super();
+            //16:9 aspect ratio
+            this.game = new Phaser.Game(720, 405, Phaser.AUTO, 'game', {
+                init: this.init,
                 preload: this.preload,
                 create: this.create
             });
             this.game.rootScope = $rootScope;
             this.game.socketService = socketService;
+        }
+
+        init() {
+            this.input.maxPointers = 1;
+            this.stage.disableVisibilityChange = true;
+            this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.scale.pageAlignHorizontally = true;
+            let portrait = true;
+            
+            if (this.game.device.desktop) {
+                this.scale.setMinMax(0, 0, 720, 405);
+            } else {
+                this.game.scale.setGameSize(405, 575);
+                this.scale.setMinMax(0, 0, 1024, 1024);
+                this.scale.forceOrientation(false, true);
+                this.scale.enterIncorrectOrientation.add(()=>{
+                    //Show 'go to portrait' dialog
+                });
+                this.scale.leaveIncorrectOrientation.add(()=>{
+                    //Hide 'go to portrait' dialog
+                });
+            }
         }
 
         preload() {

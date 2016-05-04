@@ -1,0 +1,15 @@
+<section id="chatContainer">
+    <ul class="chat-history" scroll-chat-bottom="chatCtrl.messages">
+        <li class="chat-message" ng-repeat="message in chatCtrl.messages">
+            <span class="player-name" ng-if="message.playerName">{{::message.playerName}}: </span>
+            <span class="message-text" ng-class="{'system-message': message.type === 'system'}"> {{::message.text}}</span>
+        </li>
+    </ul>
+    <form name="chatForm" ng-submit="chatCtrl.chatFormSubmit()">
+        <input type="text"
+               class="chat-input"
+               placeholder="Click here (or press enter) to chat"
+               ng-model="chatCtrl.message"
+               focus-chat-input />
+    </form>
+</section>
