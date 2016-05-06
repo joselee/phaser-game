@@ -1,8 +1,21 @@
 var map;
 var player;
 var controls;
+var target;
 var layers = {};
-var game = new Phaser.Game(480, 320, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'game', { init: init, preload: preload, create: create, update: update, render: render });
+
+function init() {
+    var self = this;
+    this.input.maxPointers = 1;
+    this.stage.disableVisibilityChange = true;
+    this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+    
+    this.scale.setResizeCallback(_.debounce(function(){
+        self.scale.setGameSize(window.innerWidth, window.innerHeight);
+        self.scale.refresh();
+    }, 1000), this);
+}
 
 function preload() {
     // Load map json, and all pngs used by map
@@ -27,6 +40,8 @@ function create() {
     layers.collision.alpha = 0;
     map.setCollisionBetween(1, 2000, true, 'collision');
     game.physics.arcade.enable(player);
+    layers.bg.resizeWorld();
+    game.camera.follow(player);
 
     player.animations.add('walkDown', [0, 1, 2]);
     player.animations.add('walkLeft', [3, 4, 5]);
@@ -47,44 +62,91 @@ function create() {
         a: game.input.keyboard.addKey(Phaser.Keyboard.A),
         d: game.input.keyboard.addKey(Phaser.Keyboard.D)
     };
+    game.input.onDown.add(function (pointer) {
+        var threshold = 2;
+        target = { 
+            x: {
+                min: pointer.worldX - threshold,
+                max: pointer.worldX + threshold
+            },
+            y: {
+                min: pointer.worldY - threshold,
+                max: pointer.worldY + threshold
+            }
+        };
+    }, this);
 }
 function update() {
     game.physics.arcade.collide(player, layers.collision);
+    movePlayer();
+    animateMovement();
+}
 
-    player.body.velocity.y = 0;
-    player.body.velocity.x = 0;
+function render() {
+    // game.debug.bodyInfo(player);
+    // game.debug.body(player);
+}
+
+function movePlayer () {
+    var velocity = player.body.velocity;
+    velocity.y = 0;
+    velocity.x = 0;
 
     var up = controls.up.isDown || controls.w.isDown;
     var down = controls.down.isDown || controls.s.isDown;
     var left = controls.left.isDown || controls.a.isDown;
     var right = controls.right.isDown || controls.d.isDown;
 
-    if (up) {
-        player.animations.play('walkUp', 10, true);
-        player.body.velocity.y = -100;
-    } else if (down) {
-        player.animations.play('walkDown', 10, true);
-        player.body.velocity.y = 100;
-    }
+    // Keyboard movement
+    if (up)
+        velocity.y = -100;
+    else if (down)
+        velocity.y = 100;
+    if (left)
+        velocity.x = -100;
+    else if (right)
+        velocity.x = 100;
 
-    if (left) {
-        if (!up && !down) {
-            player.animations.play('walkLeft', 10, true);
-        }
-        player.body.velocity.x = -100;
-    } else if (right) {
-        if (!up && !down) {
-            player.animations.play('walkRight', 10, true);
-        }
-        player.body.velocity.x = 100;
-    }
+    // Mouse click movement
+    if (target && !(up || down || left || right)) {
+        var x = player.position.x;
+        var y = player.position.y;
+        var xMin = target.x.min;
+        var xMax = target.x.max;
+        var yMin = target.y.min;
+        var yMax = target.y.max;
 
-    if (!up && !down && !left && !right) {
-        player.animations.stop();
+        // Decide which directions to move in by comparing current position and target position
+        if (x < xMin)
+            velocity.x = 100;
+        else if (x > xMax)
+            velocity.x = -100;
+        if (y < yMin)
+            velocity.y = 100;
+        else if (y > yMax)
+            velocity.y = -100;
+            
+        // Destination reached
+        if (x > xMin && x < xMax && y > yMin && y < yMax)
+            target = null;
     }
 }
 
-function render() {
-    // game.debug.bodyInfo(player);
-    // game.debug.body(player);
-} 
+function animateMovement() {
+    var velocity = player.body.velocity;
+    // Vertical movement
+    if (velocity.y < 0)
+        player.animations.play('walkUp', 10, true);
+    else if (velocity.y > 0)
+        player.animations.play('walkDown', 10, true);
+
+    // Horizontal movement
+    if (velocity.x < 0 && velocity.y === 0)
+        player.animations.play('walkLeft', 10, true);
+    else if (velocity.x > 0 && velocity.y === 0)
+        player.animations.play('walkRight', 10, true);
+
+    // No movement
+    if (velocity.x === 0 && velocity.y === 0)
+        player.animations.stop();
+}
