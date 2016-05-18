@@ -4,7 +4,7 @@ namespace PhaserGame {
         animationSpeed: number = 10;
         playerId: string;
 
-        constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers: IMapLayers) {
+        constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers) {
             super(game, playerData.posX, playerData.posY, spriteSheetId);
             this.game = game;
             this.game.physics.arcade.enable(this);

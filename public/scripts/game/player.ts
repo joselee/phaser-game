@@ -8,7 +8,7 @@ namespace PhaserGame {
         playerId: string;
         playerName: string;
 
-        constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers: IMapLayers) {
+        constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers) {
             super(game, playerData.posX, playerData.posY, spriteSheetId);
             this.game = game;
             this.game.physics.arcade.enable(this);
@@ -51,7 +51,7 @@ namespace PhaserGame {
 
         update() {
             super.update();
-            this.game.physics.arcade.collide(this, this.mapLayers.blockedLayer);
+            this.game.physics.arcade.collide(this, this.mapLayers.collision);
             let velocity = this.body.velocity;
             this.movePlayer(velocity);
             this.animateMovement(velocity);

@@ -2,7 +2,7 @@ namespace PhaserGame {
     export class Game extends Phaser.State{
         game: IPhaserAngularGame;
         map: Phaser.Tilemap;
-        mapLayers: IMapLayers;
+        mapLayers;
         player: PhaserGame.Player;
         players: {[playerId: string]: PhaserGame.OtherPlayer};
 
@@ -12,7 +12,8 @@ namespace PhaserGame {
             this.game = new Phaser.Game(720, 405, Phaser.AUTO, 'game', {
                 init: this.init,
                 preload: this.preload,
-                create: this.create
+                create: this.create,
+                render: this.render
             });
             this.game.rootScope = $rootScope;
             this.game.socketService = socketService;
@@ -39,30 +40,50 @@ namespace PhaserGame {
                 });
             }
         }
+        
+        render() {
+            if(this.player){
+                this.game.debug.bodyInfo(this.player, 0, 0, 'rgb(255,255,255)');
+                this.game.debug.body(this.player);
+            }
+        }
 
         preload() {
-            this.game.load.tilemap('world_tilemap', 'assets/world_tilemap.json', null, Phaser.Tilemap.TILED_JSON);
-            this.game.load.image('tileset_nature_1', 'assets/tileset_nature_1.png');
+            // this.game.load.tilemap('world_tilemap', 'assets/world_tilemap.json', null, Phaser.Tilemap.TILED_JSON);
+            // this.game.load.image('tileset_nature_1', 'assets/tileset_nature_1.png');
+            this.game.load.tilemap('world2', 'assets/world2.json', null, Phaser.Tilemap.TILED_JSON);
+            this.game.load.image('ground', 'assets/ground.png');
+            this.game.load.image('nature', 'assets/nature.png');
+            this.game.load.image('nature2', 'assets/nature2.png');
+            this.game.load.image('water', 'assets/water.png');
+            this.game.load.image('collision', 'assets/collision.png');
             this.game.load.spritesheet('girl', 'assets/character_girl_5.png', 32, 32);
         }
 
         create() {
             // Load the tilemap world_tilemap.json, and the image asset(s) it needs 
-            this.map = this.game.add.tilemap('world_tilemap');
-            this.map.addTilesetImage('tileset_nature_1', 'tileset_nature_1');
+            // this.map = this.game.add.tilemap('world_tilemap');
+            // this.map.addTilesetImage('tileset_nature_1', 'tileset_nature_1');
+            this.map = this.game.add.tilemap('world2');
+            this.map.addTilesetImage('ground', 'ground');
+            this.map.addTilesetImage('nature', 'nature');
+            this.map.addTilesetImage('nature2', 'nature2');
+            this.map.addTilesetImage('water', 'water');
+            this.map.addTilesetImage('collision', 'collision');
 
             // Render the layers defined in the tilemap, and collect them into an object for ease of use.
-            this.mapLayers = {
-                bgLayer: this.map.createLayer('bgLayer'),
-                rocksLayer: this.map.createLayer('rocksLayer'),
-                plantsLayer: this.map.createLayer('plantsLayer'),
-                blockedLayer: this.map.createLayer('blockedLayer')
-            };
+            this.mapLayers = {}
+            this.mapLayers.bg = this.map.createLayer('bg');
+            this.mapLayers.cliffs = this.map.createLayer('cliffs');
+            this.mapLayers.cliffs2 = this.map.createLayer('cliffs2');
+            this.mapLayers.bottom = this.map.createLayer('bottom');
+            this.mapLayers.top = this.map.createLayer('top');
+            this.mapLayers.collision = this.map.createLayer('collision');
 
             // set blockedLayer as invisible collision layer
-            this.map.setCollisionBetween(1, 2000, true, 'blockedLayer');
-            this.mapLayers.blockedLayer.alpha = 0;
-            this.mapLayers.bgLayer.resizeWorld(); // set world boundaries to map size
+            this.map.setCollisionBetween(1, 20000, true, 'collision');
+            // this.mapLayers.collision.alpha = 0;
+            this.mapLayers.bg.resizeWorld(); // set world boundaries to map size
 
             // Listens for angular event to toggle game keyboard bindings.
             this.game.rootScope.$on('setFocusToChat', (event, chatFocused) => {
@@ -116,12 +137,5 @@ namespace PhaserGame {
         rootScope?: ng.IRootScopeService;
         socketService?: SocketService;
         target?: any;
-    }
-
-    export interface IMapLayers {
-        bgLayer: Phaser.TilemapLayer;
-        rocksLayer: Phaser.TilemapLayer;
-        plantsLayer: Phaser.TilemapLayer;
-        blockedLayer: Phaser.TilemapLayer;
     }
 }
