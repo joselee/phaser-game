@@ -43,8 +43,8 @@ namespace PhaserGame {
         
         render() {
             if(this.player){
-                this.game.debug.bodyInfo(this.player, 0, 0, 'rgb(255,255,255)');
-                this.game.debug.body(this.player);
+                // this.game.debug.bodyInfo(this.player, 0, 0, 'rgb(255,255,255)');
+                // this.game.debug.body(this.player);
             }
         }
 
@@ -77,12 +77,15 @@ namespace PhaserGame {
             this.mapLayers.cliffs = this.map.createLayer('cliffs');
             this.mapLayers.cliffs2 = this.map.createLayer('cliffs2');
             this.mapLayers.bottom = this.map.createLayer('bottom');
+            this.player = new Player(this.game, 'girl', this.mapLayers);
+            this.game.add.existing(this.player);
+            this.game.camera.follow(this.player);
             this.mapLayers.top = this.map.createLayer('top');
             this.mapLayers.collision = this.map.createLayer('collision');
 
             // set blockedLayer as invisible collision layer
             this.map.setCollisionBetween(1, 20000, true, 'collision');
-            // this.mapLayers.collision.alpha = 0;
+            this.mapLayers.collision.alpha = 0;
             this.mapLayers.bg.resizeWorld(); // set world boundaries to map size
 
             // Listens for angular event to toggle game keyboard bindings.
@@ -94,10 +97,11 @@ namespace PhaserGame {
             this.game.rootScope.$on('playerJoined', (event, data) => {
                 // Instantiate the player.
                 let playerData: IPlayerData = data.players[data.id];
-                this.player = new Player(this.game, playerData, 'girl', this.mapLayers);
+                // this.player = new Player(this.game, playerData, 'girl', this.mapLayers);
+                // this.game.add.existing(this.player);
+                // this.game.camera.follow(this.player);
+                this.player.setPlayerData(playerData);
                 this.game.rootScope.$emit('addMessageToMessageBox', {type: 'system', text: 'You have joined as ' + this.player.playerName});
-                this.game.add.existing(this.player);
-                this.game.camera.follow(this.player);
                 this.players = {};
 
                 // Instantiate other players already in the game

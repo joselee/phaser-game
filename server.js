@@ -16,8 +16,8 @@ let Player = (id) => {
     return {
         id: id,
         playerName: 'Player_' + Math.floor(1 + Math.random() * 100000),
-        posX: 180,
-        posY: 300,
+        posX: 300,
+        posY: 180,
         animation: 'walkDown',
         animationPlaying: false
     }

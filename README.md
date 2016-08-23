@@ -22,5 +22,4 @@ This is a browser-based real-time multiplayer game.
 
 #### Setup & run:
 - npm install
-- gulp (*builds and watches*)
-- run any webserver in public/
+- node server.js

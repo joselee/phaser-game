@@ -8,13 +8,11 @@ namespace PhaserGame {
         playerId: string;
         playerName: string;
 
-        constructor(game: IPhaserAngularGame, playerData:IPlayerData, spriteSheetId: string, private mapLayers) {
-            super(game, playerData.posX, playerData.posY, spriteSheetId);
+        constructor(game: IPhaserAngularGame, spriteSheetId: string, private mapLayers) {
+            super(game, 300, 180, spriteSheetId);
             this.game = game;
             this.game.physics.arcade.enable(this);
             this.anchor.set(0.5);
-            this.playerId = playerData.id;
-            this.playerName = playerData.playerName;
             this.game.target = null;
 
             this.animations.add('walkDown', [0, 1, 2]);
@@ -47,6 +45,11 @@ namespace PhaserGame {
             }, this);
 
             this.sendUpdateToServer();
+        }
+
+        setPlayerData(playerData:IPlayerData) {
+            this.playerId = playerData.id;
+            this.playerName = playerData.playerName;
         }
 
         update() {
